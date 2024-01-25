@@ -30,19 +30,16 @@ app.get("/api/courses", (req, res) => {
 
 app.get("/api/courses/:id", (req, res) => {
   const course = courses.find((c) => c.id === parseInt(req.params.id));
-  if (!course) res.status(404).send("Course with the given ID not found");
+  if (!course)
+    return res.status(404).send("Course with the given ID not found");
   res.send(course);
 });
 
 app.post("/api/courses", (req, res) => {
-  const schema = Joi.object({
-    name: Joi.string().min(3).required(),
-  });
+  const { error } = validateSchema(req.body);
 
-  const result = schema.validate(req.body);
-
-  if (result.error) {
-    res.status(400).send(result.error.details[0].message);
+  if (error) {
+    res.status(400).send(error.details[0].message);
     return;
   }
 
@@ -52,6 +49,43 @@ app.post("/api/courses", (req, res) => {
   };
   courses.push(course);
   res.send(course);
+});
+
+app.put("/api/courses/:id", (req, res) => {
+  //check if the user is present if not present send 404 error
+  const course = courses.find((c) => c.id === parseInt(req.params.id));
+  if (!course) return res.status(404).send("User with given Id is not present");
+
+  //res.send(course);
+
+  //check if user input valid-if not-send 400 bad request
+  const { error } = validateSchema(req.body);
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+
+  //update the user
+  course.name = req.body.name;
+  res.send(course);
+});
+
+const validateSchema = (course) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).required(),
+  });
+  return schema.validate(course);
+};
+
+app.delete("/api/courses/:id", (req, res) => {
+  //check if the user is present if not present send 404 error
+  let course = courses.find((c) => c.id === parseInt(req.params.id));
+  if (!course) return res.status(404).send("User with given Id is not present");
+
+  //if id is present -delete
+  const index = courses.indexOf(course);
+  courses.splice(index, 1);
+  res.send(courses);
 });
 
 const port = process.env.PORT || 3000;
