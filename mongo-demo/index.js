@@ -35,4 +35,36 @@ async function getCourses() {
   console.log(courses);
 }
 
-getCourses();
+///finding the id to update and then updating the record
+// async function updateCourse(id) {
+//   const course = await Course.findById(id);
+//   if (!course) return;
+
+//   course.isPublished = true;
+//   course.author = "another other";
+
+//   // course.set({
+//   //   isPublished: true,
+//   //   author: "another other",
+//   // });
+
+//   const result = await course.save();
+//   console.log(result);
+// }
+
+///directly updating the record
+async function updateCourse(id) {
+  const result = await Course.updateOne(
+    { _id: id },
+    {
+      $set: {
+        author: "mosh",
+        isPublished: false,
+      },
+    }
+  );
+
+  console.log(result);
+}
+
+updateCourse("65b4ff2e044461c3ca2ce021");
