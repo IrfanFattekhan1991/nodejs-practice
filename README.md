@@ -10,3 +10,4 @@
 -used find(),update(),findById(), etc methods to perform CRUD operations
 -created API for movies -Vidly
 -build authentication and autherization
+-middleware functions for auth
